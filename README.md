@@ -2,6 +2,7 @@
     <img src=7.png width=400 alt="hi chat" >
 </div>
 
+- `students.txt this a test case file`
 
 # THIS IS LAB1 PROJECT PFP191 BY GROUP 3
 ---
