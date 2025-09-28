@@ -2,20 +2,109 @@
     <img src=7.png width=400 alt="hi chat" >
 </div>
 
-- `students.txt this a test case file`
-
 # THIS IS LAB1 PROJECT PFP191 BY GROUP 3
 ---
-## ABOUT
+## ABOUT GROUP 3 MEMBERS
 
-- I don't know that is a final project or is a lab 1 because if is a lab 1, that is so diffcult with almost students in class.
+| # | Student ID | Full Name | Completion Level | Task Performed |
+| :--- | :--- | :--- | :--- | :--- |
+|1|SE203817|Lưu Nguyễn Tấn Khải|100%|100%|
+|2|SE203829|Nguyễn Nhật Huy|100%|100%|
+|3|SE204019|Nguyễn Phạm Mai Phương|100%|100%|
+|4|SE204029|Lê Nam Phong|100%|100%|
 
-- I fully comment all in my code so if you don't know what the fucking code mean you can ask me :>>.
-
-- Last one, I don't write report and make presentation because I write all code you just have read this description then rewrite just fucking easy
 ---
-## Summary Components
-### 1/ Models/student.py
+## 1. Algorithm Design & Flowcharts
+
+<div>
+    <img src="./assets/flowchart.png">
+</div>
+
+---
+
+## 2. Implementation of Basic Function
+
+### 🔹 1. Functions and Steps
+
+| Function | Sub-steps |
+| :--- | :--- |
+| **Add Student** | Input information (Name, Birth, ID, Major, GPA) → Validate input → Create object → Save to list |
+| **Calculate GPA** | Iterate list → Get each GPA → Calculate average |
+| **Search by ID/Name** | Select search by ID or Name → Input search query → Iterate list → Return results |
+| **Edit Information** | Find student → Display information → Input new data → Update list |
+| **Delete Student** | Find student → Confirm deletion → Remove from list |
+| **Sort List** | Select criteria (Name, GPA, Birth Year) → Sort list → Display results |
+| **Write Data to File** | Open file → Write student list → Close file |
+| **Read Data from File** | Open file → Read data → Create student list → Return list |
+| **Display List** | Iterate through each student → Print out information |
+| **Menu Navigation** | Display menu → Input selection → Call correct function |
+
+---
+
+### 🔹 2. Patterns (Recurring)
+
+| Pattern | Description |
+| :--- | :--- |
+| **Input Validation** | Check for valid input (e.g., GPA must be from 0.0 to 4.0) |
+| **Menu Structure** | Use a loop and integer selection to navigate the main menu |
+| **Search by Field** | Iterate through the list to find by ID or by name |
+| **File I/O** | Read and write the student list to/from the `students.txt` file |
+| **Exception Handling** | Catch errors when unable to read the file or data format is invalid |
+| **Object-Oriented Design** | Use the `StudentData` and `StudentManager` classes to organize program logic |
+| **User Confirmation** | Require confirmation before deleting or editing information |
+
+---
+
+## 3. Object-Oriented Design (OOP)
+```
++---------------------------+
+|       StudentData         |
++---------------------------+
+| - name: str               |  <- Attribute
+| - birth: int              |
+| - sid: str                |
+| - major: str              |
+| - _gpa: float             |  <- Internal Variable (Protected/Private convention)
+|                           |
+| + gpa: float              |  <- Property (Represents Getter/Setter)
++---------------------------+
+| + __init__(name, birth,   |  <- Constructor Method
+|   SID, major, gpa)        |
+| + get_gpa(): float        |  <- Getter (@property gpa)
+| + set_gpa(value: float)   |  <- Setter (@gpa.setter)
+| + __str__(): str          |  <- Display Method
++---------------------------+
+```
+
+```
++-------------------------------------------------------------+
+|                     StudentManager                          |
++-------------------------------------------------------------+
+| + DATA_FILE: str = "students.txt"                           | <- Class Attribute
++-------------------------------------------------------------+
+| + __init__(name:str, birth:int, SID:str, major:str, gpa:float)| <- Constructor (Functionally 'pass')
+| + print_student_after(Slist: list)                          |
+|                                                             |
+| - _search_for_action(Slist: list): list                     | <- Core Search Logic
+| - _do_edit_logic(student: StudentData, Slist: list)         | <- Core Edit Logic
+|                                                             |
+| + find_edit_by_ID(Slist: list, search_ID: str): StudentData |
+| + find_edit_by_Name(Slist: list, search_Name: str): list    |
+|                                                             |
+| + addnew(Slist: list)                                       |
+| + searching(Slist: list)                                    |
+| + editing(Slist: list)                                      |
+| + deleting(Slist: list)                                     |
+| + sorting(Slist: list)                                      |
+| + calculate_gpa(Slist: list): float                         |
+|                                                             |
+| + Input_Load(Slist: list)                                   | <- Write/Save Data
+| + Output_Load(): list                                       | <- Read/Load Data
++-------------------------------------------------------------+
+```
+---
+## 4. File I/O & Testing
+##### 1/ Models/student.py
 ---
  Type | Name | Primary Role |
 | :--- | :--- | :--- |
@@ -25,7 +114,7 @@
 | **Method** | `__init__` | Initializes the student attributes(`__name`, `__birth`, `__SID`, `__major`, `__gpa`) |
 | **Method** | `__str__` | Formats data for display |
 ---
-### 2/ Services/student_manager.py
+##### 2/ Services/student_manager.py
 
 | Type | Name | Function Description |
 | :--- | :--- | :--- |
@@ -45,14 +134,14 @@
 | **Method** | `Input_Load(Slist)` | **(Save Data)** Saves the current `Slist` to the `.txt` file. |
 | **Method** | `Output_Load()` | **(Load Data)** Loads data from the `.txt` file and returns the `Slist`. |
 ---
-### 3/ Utils/validation.py
+##### 3/ Utils/validation.py
 
 | Type | Name | Function Description |
 | :--- | :--- | :--- |
 | **Function** | `select_menu_choice()` | Gets the integer choice from the user for the main menu (0 to 7). |
 | **Function** | `get_number_choice()` | Gets the integer choice for search/edit options (1: ID, 2: Name). |
 ---
-### 4. main.py (Execution)
+##### 4. main.py (Execution)
 
 | Type | Name | Function Description |
 | :--- | :--- | :--- |
@@ -61,7 +150,48 @@
 | **Variable** | `Slist` | The main list holding the **StudentData** objects. |
 | **Variable** | `manager` | The instance of the **StudentManager** class. |
 ---
-#### THAT ALL INFO I THINK YOU NEED SO NOW DO REPORT AND PRESENTATION( I DON'T THINK TEACHER CALL WE MAKE PRESENTATION)
+
+## 5. Experimental Results
+
+##### Menu program run
+
+<img src="./assets/1.jpg">
+
+##### Add new student
+
+<img src="./assets/2.jpg">
+
+##### GPA calculate
+
+<img src="./assets/5.jpg">
+
+##### Editing and Deleting student
+
+<img src="./assets/4.jpg">
+
+##### Sorting result
+
+<img src="./assets/6.jpg">
+
+##### I/O file
+
+<img src="./assets/7.jpg">
+
+---
+
+## 6. Appendix
+
+|#|Code File|
+|:---|:---|
+|1|`main.py`|
+|2|`/models/student.py`|
+|3|`/services/student_manager.py`|
+|4|`/utils/validation.py`|
+
+|#|Test Case File|
+|:---|:---|
+|1|`students.txt`|
+
 <div align="center">
     <img src="10.png" width=400 >
 </div>
