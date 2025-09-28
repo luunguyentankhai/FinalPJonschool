@@ -1,0 +1,6 @@
+Name,Birth,SID,Major,GPA
+An Nguyet,2004,SV001,Computer Science,3.8
+Binh Minh,2003,SV002,Information Technology,2.5
+Chi Dung,2005,SV003,Computer Science,3.95
+Duong Tuan,2002,SV004,Electronic Engineering,3.2
+E Lan,2005,SV005,Graphic Design,3.5
