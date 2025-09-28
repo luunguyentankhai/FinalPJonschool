@@ -55,16 +55,18 @@ class StudentManager:
                 for i, student in enumerate(candidates):
                     print(f"{i+1}. {student}")
 
+                while True:
                     verify_id = input("Please verity correct student ID: ").strip()
-
+                    
+                    if not verify_id:
+                        print("Cancel search")
+                        return []
+                    
                     student = self.find_edit_by_ID(candidates, verify_id)
                     if student:
                         return [student]
                     else:
                         print(f"Error: Can not find student with ID {verify_id}")
-                        print(f"Please try again or press Enter to cancel")
-                        if not verify_id:
-                            return []
             
             else:
                 return candidates
@@ -321,7 +323,3 @@ class StudentManager:
         else:
             print(f"File data {DATA_FILE} not exists. Start with Empty List")
             return []
-
-
-
-
