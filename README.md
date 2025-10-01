@@ -2,19 +2,53 @@
     <img src=7.png width=400 alt="hi chat" >
 </div>
 
-# THIS IS LAB1 PROJECT PFP191 BY GROUP 3
+# THIS IS FINAL PROJECT PFP191 BY GROUP 3
 ---
-## ABOUT GROUP 3 MEMBERS
+## 1. INTRODUCTION
 
+### 1.1 DESCRIPTION
+- The project develops a **Student Management System** using the Python programming language.
+- The program allows managing student records, entering grades and calculating GPA, searching, sorting, saving/reading data from files, while applying object-oriented programming (OOP), exception handling, and templates.
+
+### 1.2 PROJECT TEAM 
 | # | Student ID | Full Name | Completion Level | Task Performed |
 | :--- | :--- | :--- | :--- | :--- |
-|1|SE203817|Lưu Nguyễn Tấn Khải|100%|100%|
-|2|SE203829|Nguyễn Nhật Huy|100%|100%|
-|3|SE204019|Nguyễn Phạm Mai Phương|100%|100%|
-|4|SE204029|Lê Nam Phong|100%|100%|
+|1|**SE203817**|**Lưu Nguyễn Tấn Khải**|100%|100%|
+|2|**SE203829**|**Nguyễn Nhật Huy**|100%|100%|
+|3|**SE204019**|**Nguyễn Phạm Mai Phương**|100%|100%|
+|4|**SE204029**|**Lê Nam Phong**|100%|100%|
 
 ---
-## 1. Algorithm Design & Flowcharts
+## 2. REQUIREMENT ANALYSIS & DECOMPOSITION
+
+### 2.1 DATA
+
+| # | Name | Description |
+| :---: | :--- | :--- |
+| **1** | **Code** | Student ID (The unique identifier for each student record). |
+| **2** | **Data File** | `students.txt` (The file used for persistent storage). |
+| **3** | **Data File** | `Input.csv` (The file used for load input)|
+
+### 2.2. Functions
+
+| # | Function | Description |
+| :---: | :--- | :--- |
+| **1** | **Student Management** | Manage students (Core CRUD operations and data manipulation). |
+
+#### 2.2.1 Sub-functions of Student Management
+
+To manage the student list effectively, the system must include the following sub-functions:
+
+* **addStudent:** Add a new student record to the list.
+* **editStudent:** Modify the information of an existing student.
+* **deleteStudent:** Remove a student record from the list.
+* **searchStudent:** Find students based on specific criteria (ID or Name).
+* **sortStudent:** Arrange the student list based on a selected field (Name, GPA, etc.).
+* **calculateGPA:** Calculate the overall average GPA of all students in the list.
+* **fileIO:** Handle data persistence (reading from/writing to files).
+
+---
+## 3. ALGORITHM DESIGN & FLOWCHARTS
 
 #### FLowChart Main.py
 ```mermaid
@@ -132,9 +166,9 @@
 ```
 ---
 
-## 2. Implementation of Basic Function
+## 4. IMPLEMENTATION OF BASIC FUNCTIONS
 
-### 🔹 1. Functions and Steps
+### 4.1 FUNCTIONS AND STEPS  
 
 | Function | Sub-steps |
 | :--- | :--- |
@@ -151,7 +185,7 @@
 
 ---
 
-### 🔹 2. Patterns (Recurring)
+### 4.2 PATTERNS (RECURRING)
 
 | Pattern | Description |
 | :--- | :--- |
@@ -165,7 +199,7 @@
 
 ---
 
-## 3. Object-Oriented Design (OOP)
+## 5. OBJECT-ORIENTED DESIGN (OOP) 
 ```
 +---------------------------+
 |       StudentData         |
@@ -213,7 +247,7 @@
 +-------------------------------------------------------------+
 ```
 ---
-## 4. File I/O & Testing
+## 6. FILE I/O & TESTING 
 ##### 1/ Models/student.py
 ---
  Type | Name | Primary Role |
@@ -251,7 +285,7 @@
 | **Function** | `select_menu_choice()` | Gets the integer choice from the user for the main menu (0 to 7). |
 | **Function** | `get_number_choice()` | Gets the integer choice for search/edit options (1: ID, 2: Name). |
 ---
-##### 4. main.py (Execution)
+##### 4/ main.py (Execution)
 
 | Type | Name | Function Description |
 | :--- | :--- | :--- |
@@ -261,7 +295,7 @@
 | **Variable** | `manager` | The instance of the **StudentManager** class. |
 ---
 
-## 5. Experimental Results
+## 7. EXPERIMENTAL RESULTS
 
 ##### Menu program run
 
@@ -289,7 +323,7 @@
 
 ---
 
-## 6. Appendix
+## 8. APPENDIX
 
 |#|Code File|
 |:---|:---|
@@ -301,6 +335,7 @@
 |#|Test Case File|
 |:---|:---|
 |1|`students.txt`|
+|2|`Input.csv`|
 
 <div align="center">
     <img src="10.png" width=400 >
