@@ -16,10 +16,120 @@
 ---
 ## 1. Algorithm Design & Flowcharts
 
-<div>
-    <img src="./assets/flowchart.png">
-</div>
+#### FLowChart Main.py
+```mermaid
+    graph TD
+    A["Start: main()"] --> B("Initialize StudentManager and Slist");
+    B --> C("Load Data: manager.Output_Load()");
+    C --> D{"Main Loop: choice != 0"};
 
+    %% Main function branches
+    D -- "Yes" --> E("Display Menu and Get choice");
+    E --> F{"Check choice"};
+    
+    F -- "1: Add" --> G("manager.addnew(Slist)");
+    F -- "2: Edit" --> H("manager.editing(Slist)");
+    F -- "3: Delete" --> I("manager.deleting(Slist)");
+    F -- "4: Search" --> J("manager.searching(Slist)");
+    F -- "5: Sort" --> K("manager.sorting(Slist)");
+    F -- "6: GPA" --> L("manager.calculate_gpa(Slist)");
+    F -- "7: Display" --> M("output_student_list");
+    
+    %% Return to loop
+    G --> D;
+    H --> D;
+    I --> D;
+    J --> D;
+    K --> D;
+    L --> D;
+    M --> D;
+
+    %% Program Exit
+    F -- "0: Exit" --> N("Save Data: manager.Input_Load(Slist)");
+    N --> O["End"];
+    D -- "No" --> O;
+```
+---
+#### FlowChart Services/Students_Manager.py
+```mermaid
+    graph TD
+    A[Start: Search Action] --> B{Get Search Type: ID or Name};
+
+    %% -------------------- ID Branch --------------------
+    B -- "ID (1)" --> C[Input search ID];
+    C --> D{Student Found by ID?};
+    
+    D -- "Found" --> E[Return Student Object];
+    D -- "Not Found" --> F[Print Error: ID Not Found] & F --> G[Return Empty List];
+
+    %% -------------------- Name Branch --------------------
+    B -- "Name (2)" --> H[Input search Name];
+    H --> I[Candidates = Find by Name];
+    
+    I --> J{Candidates is empty?};
+    J -- "Yes" --> F; 
+
+    I --> K{Candidates > 1?};
+
+    %% Multiple Results Case (Name Duplicates)
+    K -- "Yes" --> L[Display all candidates];
+    L --> M{Loop: Verify ID?};
+    
+    M -- "Enter to Cancel" --> O[Print Cancel] & O --> G;
+    M -- "Input ID" --> P{ID found in Candidates list?};
+    
+    P -- "Found" --> E;
+    P -- "Not Found" --> Q[Print Error: Invalid ID] & Q --> M;
+    
+    %% Single Result Case
+    K -- "No" --> E;
+```
+---
+#### FlowChart Utils/Validation.py
+```mermaid
+    graph TD
+    A["Start: validate_function"] --> B{Loop};
+    B --> C["Prompt user for input"];
+    C --> D["Read input data"];
+
+    %% CHECK 1: Empty String
+    D --> E{"Input is empty?"};
+    E -- "Yes" --> F["Print Error: Cannot be empty"];
+    F --> C;
+
+    E -- "No" --> G{"Try to Convert/Cast"};
+    
+    %% CHECK 2: Data Type (Conversion)
+    G -- "Conversion Fails" --> H["Print Error: Invalid data type"];
+    H --> C;
+
+    G -- "Conversion Success" --> I{"Check Range/Condition?"};
+
+    %% CHECK 3: Range / Business Rule
+    I -- "Out of Range" --> J["Print Error: Value outside valid range"];
+    J --> C;
+
+    I -- "Valid" --> K["Return Valid Data"];
+```
+---
+#### FlowChart Models/student.py
+```mermaid
+    graph TD
+    A["Start: Set gpa(value)"] --> B{Is value a number?};
+
+    %% Check 1: Data Type
+    B -- "No" --> C["Raise TypeError"];
+    C --> Z[End];
+
+    B -- "Yes" --> D{"Is 0.0 <= value <= 4.0?"};
+
+    %% Check 2: Range
+    D -- "No" --> E["Raise ValueError"];
+    E --> Z;
+
+    D -- "Yes" --> F["Assign value to _gpa"];
+    F --> Z;
+```
 ---
 
 ## 2. Implementation of Basic Function
