@@ -2,18 +2,19 @@ from models.student import StudentData
 from utils.validation import get_number_choice
 import os
 
-DATA_FILE = "students.txt"
+
+DEFAULT_DATA_FILE = "students.txt"
 
 
 class StudentManager:
-    
+
     def __init__(
         self, __name: str, __birth: int, __SID: str, __major: str, __gpa: float
     ):
         pass
 
-    #print_student after sorting
-    def print_student_after(self,Slist):
+    # print_student after sorting
+    def print_student_after(self, Slist):
         print("\n--=Student List After Sorting=--")
         if not Slist:
             return
@@ -28,7 +29,6 @@ class StudentManager:
         print(f"2/ Finding by Name")
 
         choice = get_number_choice()
-
 
         # find by ID
         if choice == 1:
@@ -48,7 +48,7 @@ class StudentManager:
             if not candidates:
                 print(f"Can not find student name: {search_Name}")
                 return []
-            
+
             elif len(candidates) > 1:
                 print("Found many result: ")
 
@@ -57,17 +57,17 @@ class StudentManager:
 
                 while True:
                     verify_id = input("Please verity correct student ID: ").strip()
-                    
+
                     if not verify_id:
                         print("Cancel search")
                         return []
-                    
+
                     student = self.find_edit_by_ID(candidates, verify_id)
                     if student:
                         return [student]
                     else:
                         print(f"Error: Can not find student with ID {verify_id}")
-            
+
             else:
                 return candidates
 
@@ -189,7 +189,7 @@ class StudentManager:
         if not Slist:
             print(f"List is empty")
             return
-        
+
         found_student = self._search_for_action(Slist)
 
         if found_student:
@@ -216,19 +216,21 @@ class StudentManager:
         if not Slist:
             print(f"List is empty. Can not delete")
             return
-        
+
         found_candidates = self._search_for_action(Slist)
 
         if found_candidates:
             student_to_delete = found_candidates[0]
             print(f"Do you sure to delete student:")
             print(f"Name: {student_to_delete.name} \nID: {student_to_delete.sid}")
-            
+
             confirmation = input(f"Accept to delete (Y/N): ").strip().upper()
 
-            if confirmation == 'Y':
+            if confirmation == "Y":
                 Slist.remove(student_to_delete)
-                print(f"Delete student {student_to_delete.name} id {student_to_delete.sid} successful")
+                print(
+                    f"Delete student {student_to_delete.name} id {student_to_delete.sid} successful"
+                )
             else:
                 print(f"Cancel delete student")
         else:
@@ -239,7 +241,7 @@ class StudentManager:
         if not Slist:
             print("List is empty. Can not sort")
             return
-        
+
         print(f"\nSelect sorting criteria")
         print(f"1. Sorting by Name(A-Z)")
         print(f"2. Sorting by GPA(Ascending to Descending)")
@@ -248,9 +250,9 @@ class StudentManager:
         while True:
             try:
                 choice = int(input("Select criteria: "))
-                if choice in [1,2,3]:
+                if choice in [1, 2, 3]:
                     break
-                else: 
+                else:
                     print(f"Error: Select invalid. Please select 1,2 or 3 again")
             except ValueError:
                 print(f"Error: Please input a integer")
@@ -262,32 +264,32 @@ class StudentManager:
         elif choice == 2:
             Slist.sort(key=lambda student: student.gpa, reverse=True)
             print("Sorting by GPA successful")
-        
+
         elif choice == 3:
             Slist.sort(key=lambda student: student.birth, reverse=True)
             print("Sorting by Birth Year successful")
-        
+
         self.print_student_after(Slist)
 
-    #Calculate Average GPA student
+    # Calculate Average GPA student
     def calculate_gpa(self, Slist):
         if not Slist:
             return 0.0
-        
+
         total_gpa = sum(student.gpa for student in Slist)
         return total_gpa / len(Slist)
 
-    #Save/Load file 
-    def Input_Load(self,Slist):
+    # Save/Load file
+    def Input_Load(self, Slist):
         try:
-            with open(DATA_FILE, 'w', encoding='utf-8') as f:
+            with open(DEFAULT_DATA_FILE, "w", encoding="utf-8") as f:
                 f.write("Name,Birth,SID,Major,GPA\n")
-            
+
                 for student in Slist:
                     line = f"{student.name},{student.birth},{student.sid},{student.major},{student.gpa}\n"
                     f.write(line)
-            
-            print(f"Save date into file successful: {DATA_FILE}")
+
+            print(f"Save date into file successful: {DEFAULT_DATA_FILE}")
 
         except Exception as e:
             print(f"Error to save into file: {e}")
@@ -295,31 +297,47 @@ class StudentManager:
     def Output_Load(self):
         Slist_Loaded = []
 
-        if os.path.exists(DATA_FILE):
+        while True:
+            file_to_load = input(
+                "Input file name to load(data.csv, info.txt): "
+            ).strip()
+
+            if file_to_load.lower() == DEFAULT_DATA_FILE.lower():
+                print(f"Error: Cannot load default file to save {DEFAULT_DATA_FILE}")
+                continue
+
+            if not file_to_load.lower().endswith((".csv", ".txt")):
+                print(f"Error: File must be .csv or txt")
+                continue
+            break
+
+        if os.path.exists(file_to_load):
             try:
-                with open (DATA_FILE, 'r', encoding='utf-8') as f:
+                with open(file_to_load, "r", encoding="utf-8") as f:
                     next(f)
 
                     for line in f:
-                        fields = line.strip().split(',')
+                        fields = line.strip().split(",")
                         if len(fields) == 5:
                             sid = fields[2]
                             name = fields[0]
-                            try: 
+                            try:
                                 birth = int(fields[1])
                                 major = fields[3]
                                 gpa = float(fields[4])
                             except ValueError:
                                 print(f"Skip ValueError: {line.strip()}")
                                 continue
-                            student = StudentData(name,birth,sid,major,gpa)
+                            student = StudentData(name, birth, sid, major, gpa)
                             Slist_Loaded.append(student)
-                print(f"Load data successful for {DATA_FILE}. ({len(Slist_Loaded)} student)")
+                print(
+                    f"Load data successful for {file_to_load}. ({len(Slist_Loaded)} student)"
+                )
                 return Slist_Loaded
-            
+
             except Exception as e:
                 print(f"Error loading data: {e}. Start with Empty List")
                 return []
         else:
-            print(f"File data {DATA_FILE} not exists. Start with Empty List")
+            print(f"File data {file_to_load} not exists. Start with Empty List")
             return []
