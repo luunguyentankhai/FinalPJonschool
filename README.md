@@ -85,6 +85,8 @@ To manage the student list effectively, the system must include the following su
 ```
 ---
 #### FlowChart Services/Students_Manager.py
+
+###### Function _search_for_action
 ```mermaid
     graph TD
     A[Start: Search Action] --> B{Get Search Type: ID or Name};
@@ -117,6 +119,163 @@ To manage the student list effectively, the system must include the following su
     
     %% Single Result Case
     K -- "No" --> E;
+```
+---
+###### Function _do_edit_logic
+```mermaid
+    graph TD
+    A["Start: _do_edit_logic(student)"] --> B["Print current data of student"];
+    
+    B --> C{"Loop: Display fields to edit"};
+    C --> D{"Get user choice (1-5 or 0 to finish)"};
+
+    D -- "Choice 0 (Finish)" --> E["Exit Edit Flow"];
+    E --> Z["End"]; 
+
+    D -- "Choice 1-5" --> F["Call appropriate validate_function"];
+    F --> G{"Validation Successful?"};
+    
+    G -- "No" --> C;
+    
+    G -- "Yes" --> H["Update student.attribute"];
+    H --> I["Print 'Update successful'"];
+    I --> C;
+
+    D -- "Invalid Choice" --> C;
+```
+---
+###### Function Addnew
+```mermaid
+    graph TD
+    A["Start: addnew(Slist)"] --> B[Loop: Get Name];
+    B --> C[Loop: Get Birth Year];
+    C --> D[Loop: Get SID];
+    D --> E{Is SID unique?};
+    
+    E -- "No" --> F[Print Error: SID exists];
+    F --> D;
+
+    E -- "Yes" --> G[Loop: Get Major];
+    G --> H[Loop: Get GPA];
+
+    H --> I[Create StudentData Object];
+    I --> J[Append to Slist];
+    J --> Z[End];
+```
+---
+###### Function Editing
+```mermaid
+    graph TD
+    A["Start: editing(Slist)"] --> B{"candidates = _search_for_action(Slist)"};
+    
+    B -- "Search Fails" --> C["Print "Edit cancelled/Student not found""];
+    C --> Z[End];
+    
+    B -- "Search Success" --> D[Get student object];
+    
+    D --> E["Call _do_edit_logic(student)"];
+    E --> F["Print "Edit process finished.""];
+    F --> Z;
+```
+---
+###### Function Deleting
+```mermaid
+    graph TD
+    A["Start: deleting(Slist)"] --> B{"student = _search_for_action(Slist)"};
+    
+    B -- "Search Fails" --> C["Print "Delete cancelled/Student not found""];
+    C --> Z[End];
+    
+    B -- "Search Success" --> D["Get student object"];
+    D --> E["Print data & Ask for confirmation (Y/N)"];
+    
+    E --> F{"User Confirmed (Y)?"};
+    
+    F -- "No" --> C; 
+    
+    F -- "Yes" --> G["Remove student from Slist"];
+    G --> H["Print "Delete successful!""];
+    H --> Z;
+```
+---
+###### Function Searching
+```mermaid
+    graph TD
+    A["Start: searching(Slist)"] --> B{"candidates = _search_for_action(Slist)"};
+    
+    B -- "Search Fails" --> C["Print "No students matched criteria.""];
+    C --> Z[End];
+    
+    B -- "Search Success" --> D["Display candidates list"];
+    D --> Z;
+```
+---
+###### Function Sorting
+```mermaid
+    graph TD
+    A["Start: sorting(Slist)"] --> B["Print Sorting Menu (Name, GPA, Birth Year)"];
+    B --> C{"Get user choice (1-3)"};
+    
+    C -- "Invalid Choice" --> B;
+
+    C -- "Valid Choice" --> D["Perform Slist.sort() based on choice"];
+    D --> E["Print "Sorting successful!""];
+    E --> F["Display sorted list"];
+    F --> Z[End];
+```
+---
+###### Functions Input/Output system
+
+- <strong>INPUT</strong>
+```mermaid
+    graph TD
+    A["Start: Input_Load(Slist)"] --> B{Is Slist empty?};
+
+    B -- "Yes" --> C["Print 'Slist is empty, no data to save.'"];
+    C --> Z["End"];
+
+    B -- "No" --> D["Open default file (students.txt) for writing"];
+    D --> E["Write Header Line to file"];
+    
+    E --> F{Loop through each student in Slist};
+    F --> G["Format student data into CSV string"];
+    G --> H["Write data string to file"];
+    H --> F;
+
+    F --> I["Close file"];
+    I --> J["Print 'Data saved successfully!'"];
+    J --> Z;
+```
+- <strong>OUTPUT</strong>
+```mermaid
+    graph TD
+    A["Start: Output_Load"] --> B["Find all .csv and .txt files"];
+    B --> C["Filter: Remove students.txt"];
+    
+    C --> D{"Loadable files found?"};
+    
+    D -- "No" --> E["Print 'No files found'"];
+    E --> Z["Return Empty List"];
+    
+    D -- "Yes" --> F["Display list of files with numbers"];
+    F --> G{"Get User Selection"};
+    
+    G -- "Select 0 (Skip)" --> Z;
+    G -- "Select File (1-N)" --> H{"Is Selection Valid?"};
+    
+    H -- "No" --> G;
+    
+    H -- "Yes" --> I["Select file_to_load"];
+    I --> J["Open and Read file"];
+    
+    J --> K{"Error Reading or Formatting?"};
+    
+    K -- "Yes" --> L["Print Error"] & L --> Z;
+    
+    K -- "No" --> M["Process data line by line"];
+    M --> N["Create StudentData objects"];
+    N --> O["Append to Slist_Loaded"];
+    O --> P["Return Slist_Loaded"];
 ```
 ---
 #### FlowChart Utils/Validation.py
