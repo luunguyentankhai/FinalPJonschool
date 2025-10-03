@@ -224,6 +224,26 @@ To manage the student list effectively, the system must include the following su
     F --> Z[End];
 ```
 ---
+###### Function Calculate GPA
+```mermaid
+    graph TD
+    A["Start: calculate_gpa(Slist)"] --> B{Is Slist empty?};
+
+    B -- "Yes" --> C["Return 0.0"];
+    C --> Z[End];
+
+    B -- "No" --> D["Initialize total_gpa = 0.0"];
+    D --> E{"Loop through each student in Slist"};
+
+    E --> F["total_gpa = total_gpa + student.gpa"];
+    F --> E;
+
+    E --> G["Calculate average = total_gpa / len(Slist)"];
+    G --> H["Print average GPA"];
+    H --> I["Return average GPA"];
+    I --> Z;
+```
+---
 ###### Functions Input/Output system
 
 - <strong>INPUT</strong>
