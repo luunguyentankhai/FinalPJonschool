@@ -2,6 +2,13 @@
     <img src=7.png width=400 alt="hi chat" >
 </div>
 
+# LOGIN ACCOUNT TESTING
+|UserName|PassWord|
+|:---:|:---:|
+|TEACHER|teaching|
+|STUDENTS|student123|
+
+---
 # THIS IS FINAL PROJECT PFP191 BY GROUP 3
 ---
 ## 1. INTRODUCTION
@@ -53,33 +60,33 @@ To manage the student list effectively, the system must include the following su
 #### FLowChart Main.py
 ```mermaid
     graph TD
-    A["Start: main()"] --> B("Initialize StudentManager and Slist");
+    A["Start: main()"] --> L{"Call authenticate_user()"};
+    
+    L -- "Returns None (Fails)" --> F[Exit Program];
+    
+    L -- "Returns Role (Success)" --> R[Save user_lg];
+    R --> B("Initialize StudentManager(user_lg)");
     B --> C("Load Data: manager.Output_Load()");
-    C --> D{"Main Loop: choice != 0"};
+    C --> D{"Main Loop: choice != 7"};
 
     %% Main function branches
-    D -- "Yes" --> E("Display Menu and Get choice");
-    E --> F{"Check choice"};
+    D -- "Yes" --> E("Display Menu and Get choice (0-7)");
     
-    F -- "1: Add" --> G("manager.addnew(Slist)");
-    F -- "2: Edit" --> H("manager.editing(Slist)");
-    F -- "3: Delete" --> I("manager.deleting(Slist)");
-    F -- "4: Search" --> J("manager.searching(Slist)");
-    F -- "5: Sort" --> K("manager.sorting(Slist)");
-    F -- "6: GPA" --> L("manager.calculate_gpa(Slist)");
-    F -- "7: Display" --> M("output_student_list");
+    E --> G{"Check choice"};
     
-    %% Return to loop
-    G --> D;
-    H --> D;
-    I --> D;
-    J --> D;
-    K --> D;
-    L --> D;
-    M --> D;
+    G -- "0: Display" --> G0("output_student_list(manager, Slist)");
+    G -- "1: Add" --> G1("manager.addnew(Slist)"); 
+    G -- "2: Edit" --> G2("manager.editing(Slist)");
+    G -- "3: Delete" --> G3("manager.deleting(Slist)");
+    G -- "4: Search" --> G4("manager.searching(Slist)");
+    G -- "5: Sort" --> G5("manager.sorting(Slist)");
+    G -- "6: GPA" --> G6("manager.calculate_gpa(Slist)");
+    
+    %% Return to loop (Quyền đã được kiểm tra bên trong G1-G6)
+    G0,G1,G2,G3,G4,G5,G6 --> D;
 
     %% Program Exit
-    F -- "0: Exit" --> N("Save Data: manager.Input_Load(Slist)");
+    G -- "7: Exit" --> N("Save Data: manager.Input_Load(Slist)");
     N --> O["End"];
     D -- "No" --> O;
 ```
@@ -147,55 +154,62 @@ To manage the student list effectively, the system must include the following su
 ###### Function Addnew
 ```mermaid
     graph TD
-    A["Start: addnew(Slist)"] --> B[Loop: Get Name];
-    B --> C[Loop: Get Birth Year];
-    C --> D[Loop: Get SID];
-    D --> E{Is SID unique?};
+    A["Start: addnew(Slist)"] --> B{"_check_permision('add')"};
     
-    E -- "No" --> F[Print Error: SID exists];
-    F --> D;
-
-    E -- "Yes" --> G[Loop: Get Major];
-    G --> H[Loop: Get GPA];
-
-    H --> I[Create StudentData Object];
-    I --> J[Append to Slist];
-    J --> Z[End];
+    B -- "False (Access Denied)" --> Z[Return];
+    
+    B -- "True" --> C["Input Name, Birth, ID, Major"];
+    C --> D{"Input and Validate GPA"};
+    
+    D -- "Invalid (ValueError)" --> D;
+    D -- "Valid" --> E["Create StudentData object"];
+    E --> F["Slist.append(student)"];
+    F --> G["Print 'Successful'"];
+    G --> Z;
 ```
 ---
 ###### Function Editing
 ```mermaid
     graph TD
-    A["Start: editing(Slist)"] --> B{"candidates = _search_for_action(Slist)"};
+    A["Start: editing(Slist)"] --> B{"_check_permision('edit')"};
     
-    B -- "Search Fails" --> C["Print "Edit cancelled/Student not found""];
-    C --> Z[End];
+    B -- "False (Access Denied)" --> Z[Return];
     
-    B -- "Search Success" --> D[Get student object];
+    B -- "True" --> C{"Is Slist empty?"};
+    C -- "Yes" --> Z;
     
-    D --> E["Call _do_edit_logic(student)"];
-    E --> F["Print "Edit process finished.""];
-    F --> Z;
+    C -- "No" --> D["Call _search_for_action(Slist)"];
+    D --> E{Found Candidates?};
+    
+    E -- "No" --> Z;
+    E -- "Yes" --> F["student_to_edit = candidates[0]"];
+    F --> G["Call _do_edit_logic(student_to_edit, Slist)"];
+    G --> Z;
 ```
 ---
 ###### Function Deleting
 ```mermaid
     graph TD
-    A["Start: deleting(Slist)"] --> B{"student = _search_for_action(Slist)"};
+    A["Start: deleting(Slist)"] --> B{"_check_permision('delete')"};
     
-    B -- "Search Fails" --> C["Print "Delete cancelled/Student not found""];
-    C --> Z[End];
+    B -- "False (Access Denied)" --> Z[Return];
     
-    B -- "Search Success" --> D["Get student object"];
-    D --> E["Print data & Ask for confirmation (Y/N)"];
+    B -- "True" --> C{"Is Slist empty?"};
+    C -- "Yes" --> Z;
     
-    E --> F{"User Confirmed (Y)?"};
+    C -- "No" --> D["Call _search_for_action(Slist)"];
+    D --> E{Found Candidates?};
     
-    F -- "No" --> C; 
+    E -- "No" --> Z;
+    E -- "Yes" --> F["student_to_delete = candidates[0]"];
+    F --> G["Prompt Confirmation (Y/N)"];
     
-    F -- "Yes" --> G["Remove student from Slist"];
-    G --> H["Print "Delete successful!""];
+    G -- "N/Other" --> H["Print 'Cancel delete'"];
     H --> Z;
+    
+    G -- "Y" --> I["Slist.remove(student_to_delete)"];
+    I --> J["Print 'Delete successful'"];
+    J --> Z;
 ```
 ---
 ###### Function Searching
@@ -249,22 +263,19 @@ To manage the student list effectively, the system must include the following su
 - <strong>INPUT</strong>
 ```mermaid
     graph TD
-    A["Start: Input_Load(Slist)"] --> B{Is Slist empty?};
-
-    B -- "Yes" --> C["Print 'Slist is empty, no data to save.'"];
-    C --> Z["End"];
-
-    B -- "No" --> D["Open default file (students.txt) for writing"];
-    D --> E["Write Header Line to file"];
+    A["Start: Input_Load(Slist)"] --> B{"_check_permision('io')"};
     
-    E --> F{Loop through each student in Slist};
-    F --> G["Format student data into CSV string"];
-    G --> H["Write data string to file"];
-    H --> F;
-
-    F --> I["Close file"];
-    I --> J["Print 'Data saved successfully!'"];
-    J --> Z;
+    B -- "False (Access Denied)" --> Z[Return];
+    
+    B -- "True" --> C["Open DEFAULT_DATA_FILE ('w')"];
+    C --> D["Write Header Line"];
+    D --> E["Loop through Slist"];
+    E --> F["Write each student data line"];
+    F --> E;
+    
+    E --> G["Close file"];
+    G --> H["Print 'Save successful'"];
+    H --> Z;
 ```
 - <strong>OUTPUT</strong>
 ```mermaid
@@ -325,6 +336,31 @@ To manage the student list effectively, the system must include the following su
     I -- "Valid" --> K["Return Valid Data"];
 ```
 ---
+#### FlowChart Utils/auth.py
+```mermaid
+graph TD
+    A["Start: authenticate_user()"] --> B["Set MAX_ATTEMPTS = 3"];
+    B --> C{"Loop attempts from 1 to 3"};
+    
+    C --> D["Prompt for Username/Password"];
+    D --> E{"Is Username in USERS?"};
+    
+    E -- "No" --> G["Print 'Invalid username/password'"];
+    G --> C; 
+    
+    E -- "Yes" --> H{"Is Password Correct?"};
+    
+    H -- "No" --> G; 
+    
+    H -- "Yes" --> I["Print 'Login successful'"];
+    I --> J["Return user ROLE"];
+    J --> Z["End"];
+
+    C -- "Loop Ends (3 Attempts)" --> K["Print 'Max attempts reached'"];
+    K --> L["Return None"];
+    L --> Z;
+```
+---
 #### FlowChart Models/student.py
 ```mermaid
     graph TD
@@ -351,13 +387,13 @@ To manage the student list effectively, the system must include the following su
 
 | Function | Sub-steps |
 | :--- | :--- |
-| **Add Student** | Input information (Name, Birth, ID, Major, GPA) → Validate input → Create object → Save to list |
+| **Add Student** | **Check Permission ('add')** → Input information (Name, Birth, ID, Major, GPA) → Validate input → Create object → Save to list |
 | **Calculate GPA** | Iterate list → Get each GPA → Calculate average |
-| **Search by ID/Name** | Select search by ID or Name → Input search query → Iterate list → Return results |
-| **Edit Information** | Find student → Display information → Input new data → Update list |
-| **Delete Student** | Find student → Confirm deletion → Remove from list |
+| **Search by ID/Name** |Select search by ID or Name → Input search query → Iterate list → Return results |
+| **Edit Information** | **Check Permission ('edit')** → Find student → Display information → Input new data → Update list |
+| **Delete Student** | **Check Permission ('delete')** → Find student → Confirm deletion → Remove from list |
 | **Sort List** | Select criteria (Name, GPA, Birth Year) → Sort list → Display results |
-| **Write Data to File** | Open file → Write student list → Close file |
+| **Write Data to File** | **Check Permission ('io')** → Open file → Write student list → Close file |
 | **Read Data from File** | Open file → Read data → Create student list → Return list |
 | **Display List** | Iterate through each student → Print out information |
 | **Menu Navigation** | Display menu → Input selection → Call correct function |
@@ -366,64 +402,66 @@ To manage the student list effectively, the system must include the following su
 
 ### 4.2 PATTERNS (RECURRING)
 
+## 📋 Tóm hợp Mẫu Thiết kế và Kỹ thuật
+
 | Pattern | Description |
 | :--- | :--- |
-| **Input Validation** | Check for valid input (e.g., GPA must be from 0.0 to 4.0) |
-| **Menu Structure** | Use a loop and integer selection to navigate the main menu |
-| **Search by Field** | Iterate through the list to find by ID or by name |
-| **File I/O** | Read and write the student list to/from the `students.txt` file |
-| **Exception Handling** | Catch errors when unable to read the file or data format is invalid |
-| **Object-Oriented Design** | Use the `StudentData` and `StudentManager` classes to organize program logic |
-| **User Confirmation** | Require confirmation before deleting or editing information |
+| **Object-Oriented Design (OOD)** | Use the **`StudentData`** and **`StudentManager`** classes to organize program logic and data, following the Single Responsibility Principle. |
+| **Encapsulation** | Use a **Property (`@property`)** for GPA in `StudentData` to protect the internal variable (`_gpa`) and enforce validation rules. |
+| **Input Validation** | Check for valid input (e.g., GPA must be from 0.0 to 4.0; menu selections must be within range) and data types. |
+| **Access Control** | Use the **`_check_permision`** method within `StudentManager` to restrict functions (Add, Edit, Delete, IO) based on the user's **`role`** (TEACHER, STUDENTS). |
+| **Authentication** | Use the **`authenticate_user()`** function to verify user identity (username/password) and assign a corresponding **`role`** before starting the main program. |
+| **Menu Structure** | Use a **loop and integer selection (`match/case`)** to navigate the main menu, providing a clear user interface. |
+| **Search by Field** | Iterate through the list to find students by **ID** or by **name** (case-insensitive substring search). |
+| **File I/O** | Read and write the student list to/from the **`students.txt`** file, ensuring data persistence. |
+| **Exception Handling** | Use `try...except` blocks to catch errors when converting data types, handling invalid GPA values, or dealing with **File I/O** issues. |
 
 ---
 
 ## 5. OBJECT-ORIENTED DESIGN (OOP) 
-```
-+---------------------------+
-|       StudentData         |
-+---------------------------+
-| - name: str               |  <- Attribute
-| - birth: int              |
-| - sid: str                |
-| - major: str              |
-| - _gpa: float             |  <- Internal Variable (Protected/Private convention)
-|                           |
-| + gpa: float              |  <- Property (Represents Getter/Setter)
-+---------------------------+
-| + __init__(name, birth,   |  <- Constructor Method
-|   SID, major, gpa)        |
-| + get_gpa(): float        |  <- Getter (@property gpa)
-| + set_gpa(value: float)   |  <- Setter (@gpa.setter)
-| + __str__(): str          |  <- Display Method
-+---------------------------+
+```mermaid
+classDiagram
+    class StudentData {
+        - name: str
+        - birth: int
+        - sid: str
+        - major: str
+        - _gpa: float
+        + gpa: float
+        
+        + __init__(name, birth, SID, major, gpa)
+        + get_gpa(): float
+        + set_gpa(value: float)
+        + __str__(): str
+    }
 ```
 
-```
-+-------------------------------------------------------------+
-|                     StudentManager                          |
-+-------------------------------------------------------------+
-| + DATA_FILE: str = "students.txt"                           | <- Class Attribute
-+-------------------------------------------------------------+
-| + __init__(name:str, birth:int, SID:str, major:str, gpa:float)| <- Constructor (Functionally 'pass')
-| + print_student_after(Slist: list)                          |
-|                                                             |
-| - _search_for_action(Slist: list): list                     | <- Core Search Logic
-| - _do_edit_logic(student: StudentData, Slist: list)         | <- Core Edit Logic
-|                                                             |
-| + find_edit_by_ID(Slist: list, search_ID: str): StudentData |
-| + find_edit_by_Name(Slist: list, search_Name: str): list    |
-|                                                             |
-| + addnew(Slist: list)                                       |
-| + searching(Slist: list)                                    |
-| + editing(Slist: list)                                      |
-| + deleting(Slist: list)                                     |
-| + sorting(Slist: list)                                      |
-| + calculate_gpa(Slist: list): float                         |
-|                                                             |
-| + Input_Load(Slist: list)                                   | <- Write/Save Data
-| + Output_Load(): list                                       | <- Read/Load Data
-+-------------------------------------------------------------+
+```mermaid
+classDiagram
+    class StudentManager {
+        + DEFAULT_DATA_FILE: str = "students.txt"
+        + Permission: dict
+        - user_lg: str
+        
+        + __init__(user_lg: str)
+        - _check_permision(key_permission: str): bool
+        - _search_for_action(Slist: list): list
+        - _do_edit_logic(student: StudentData, Slist: list)
+        
+        + print_student_after(Slist: list)
+        + find_edit_by_ID(Slist: list, search_ID: str): StudentData
+        + find_edit_by_Name(Slist: list, search_Name: str): list
+        
+        + addnew(Slist: list)
+        + searching(Slist: list)
+        + editing(Slist: list)
+        + deleting(Slist: list)
+        + sorting(Slist: list)
+        + calculate_gpa(Slist: list): float
+        
+        + Input_Load(Slist: list)
+        + Output_Load(): list
+    }
 ```
 ---
 ## 6. FILE I/O & TESTING 
@@ -441,37 +479,51 @@ To manage the student list effectively, the system must include the following su
 
 | Type | Name | Function Description |
 | :--- | :--- | :--- |
-| **Class** | **StudentManager** | The main management class, handling operations on the student list (`Slist`). |
-| **Variable** | `DATA_FILE` | Constant specifying the data file name (`students.txt`). |
+| **Class** | **StudentManager** | The main management class, handling all student list operations and **user permission checks**. |
+| **Variable** | `DEFAULT_DATA_FILE` | Constant specifying the data file name (`students.txt`). |
+| **Variable** | `Permission` | **Class-level dictionary defining access rights** for each user role (e.g., 'TEACHER', 'STUDENTS'). |
+| **Attribute** | `user_lg` | Instance attribute storing the **role of the currently logged-in user**. |
+| **Method** | `__init__(user_lg)` | **Constructor** that initializes the manager instance with the **logged-in user's role**. |
+| **Method** | `_check_permision(key_permission)` | **Core permission check.** Returns `True` if `user_lg` has the requested right (`key_permission`), otherwise prints "Access Denied" and returns `False`. |
 | **Method** | `calculate_gpa(Slist)` | Calculates the average GPA of all students in `Slist`. |
 | **Method** | `find_edit_by_ID(Slist, search_ID)` | Finds a student by ID (case-insensitive). |
 | **Method** | `find_edit_by_Name(Slist, search_Name)` | Searches for students by name (substring search). |
-| **Method** | `_search_for_action(Slist)` | Core logic to ask the user to search by ID or Name, used for Edit/Delete/Search. |
+| **Method** | `_search_for_action(Slist)` | Core logic to ask the user to search by ID or Name, used internally for Edit/Delete/Search. |
 | **Method** | `_do_edit_logic(student, Slist)` | Core handler for editing and updating individual student fields. |
-| **Method** | `addnew(Slist)` | Adds a new student object to `Slist`. |
+| **Method** | `addnew(Slist)` | **(Permission Checked)** Adds a new student object to `Slist`. |
 | **Method** | `searching(Slist)` | Performs the search and displays results. |
-| **Method** | `editing(Slist)` | Finds and edits a student's information. |
-| **Method** | `deleting(Slist)` | Finds, confirms, and deletes a student from `Slist`. |
+| **Method** | `editing(Slist)` | **(Permission Checked)** Finds and edits a student's information. |
+| **Method** | `deleting(Slist)` | **(Permission Checked)** Finds, confirms, and deletes a student from `Slist`. |
 | **Method** | `sorting(Slist)` | Sorts `Slist` by Name, GPA, or Birth Year. |
 | **Method** | `print_student_after(Slist)` | Displays the student list after sorting. |
-| **Method** | `Input_Load(Slist)` | **(Save Data)** Saves the current `Slist` to the `.txt` file. |
+| **Method** | `Input_Load(Slist)` | **(Permission Checked / Save Data)** Saves the current `Slist` to the `.txt` file. |
 | **Method** | `Output_Load()` | **(Load Data)** Loads data from the `.txt` file and returns the `Slist`. |
 ---
-##### 3/ Utils/validation.py
+##### 3/ Utils
+
+###### /validation.py
 
 | Type | Name | Function Description |
 | :--- | :--- | :--- |
 | **Function** | `select_menu_choice()` | Gets the integer choice from the user for the main menu (0 to 7). |
 | **Function** | `get_number_choice()` | Gets the integer choice for search/edit options (1: ID, 2: Name). |
+
+###### /auth.py
+
+
+| Type | Name | Function Description |
+| :--- | :--- | :--- |
+| **Function** | `authenticate_user()` | Handles the **login process** with a limit of 3 attempts. It checks the input username and password against the internal `USERS` dictionary. Returns the validated **user role** (e.g., 'TEACHER', 'STUDENTS') on success, or `None` on failure. |
 ---
 ##### 4/ main.py (Execution)
 
 | Type | Name | Function Description |
 | :--- | :--- | :--- |
-| **Function** | `output_student_list(manager, Slist)` | Displays the entire **Slist** , including the **overall average GPA**. |
-| **Function** | `main()` | The main function that starts the program, contains the core menu loop and calls service methods. |
-| **Variable** | `Slist` | The main list holding the **StudentData** objects. |
-| **Variable** | `manager` | The instance of the **StudentManager** class. |
+| **Function** | `main()` | The main function that **starts the program by calling `authenticate_user()`**, initializes the `StudentManager` with the user's role, loads data, and contains the core menu loop, calling appropriate service methods. |
+| **Function** | `output_student_list(manager, Slist)` | Displays the entire **`Slist`**, and conditionally displays the **overall average GPA** by calling `manager.calculate_gpa()`. |
+| **Variable** | `user_lg` | Variable storing the **validated role** of the logged-in user (e.g., 'TEACHER', 'STUDENTS') returned by `authenticate_user()`. |
+| **Variable** | `manager` | The instance of the **`StudentManager`** class, initialized with `user_lg`. |
+| **Variable** | `Slist` | The main list holding the **`StudentData`** objects, loaded from the file at startup. |
 ---
 
 ## 7. EXPERIMENTAL RESULTS
@@ -510,6 +562,7 @@ To manage the student list effectively, the system must include the following su
 |2|`/models/student.py`|
 |3|`/services/student_manager.py`|
 |4|`/utils/validation.py`|
+|5|`/utils/auth.py`|
 
 |#|Test Case File|
 |:---|:---|
