@@ -33,6 +33,7 @@
 
 from services.student_manager import StudentManager
 from utils.validation import select_menu_choice
+from utils.auth import authenticate_user
 
 def output_student_list(manager, Slist):
     if not Slist:
@@ -49,14 +50,21 @@ def output_student_list(manager, Slist):
     print(f"-----------------------------")
 
 def main():
+
+    user_lg = authenticate_user()
+
+    if user_lg is None:
+        return
+
     # call the StudentManager
-    manager = StudentManager("", "", 0, "", 0.0)
+    manager = StudentManager(user_lg)
 
     # create a list to input and output student
     Slist = manager.Output_Load()
 
     running = True
     while running:
+
         # Console-Based UI
         print(f"\n")
         print(f"Menu to manage students list:")
