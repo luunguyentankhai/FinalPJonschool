@@ -8,10 +8,20 @@ DEFAULT_DATA_FILE = "students.txt"
 
 class StudentManager:
 
-    def __init__(
-        self, __name: str, __birth: int, __SID: str, __major: str, __gpa: float
-    ):
-        pass
+    Permission = {
+        "TEACHER": ["add", "edit", "delete", "search", "sort", "gpa", "io"],
+        "STUDENTS": ["search", "sort", "gpa"],
+    }
+
+    def __init__(self, user_lg):
+        self.user_lg = user_lg
+
+    # check access denied
+    def _check_permision(self, key_permission):
+        if key_permission in self.Permission.get(self.user_lg, []):
+            return True
+        print(f"\nAccess Denied: Role {self.user_lg} cannot perform '{key_permission}'.")
+        return False
 
     # print_student after sorting
     def print_student_after(self, Slist):
@@ -159,6 +169,10 @@ class StudentManager:
     # Services in menu list
     # add new student into students list
     def addnew(self, Slist):
+
+        if not self._check_permision("add"):
+            return
+
         name = str(input("Input student name: "))
 
         while True:
@@ -199,6 +213,9 @@ class StudentManager:
 
     # editing the student in list
     def editing(self, Slist):
+        if not self._check_permision("edit"):
+            return
+
         if not Slist:
             print("List is empty. Can not edit")
             return
@@ -213,6 +230,9 @@ class StudentManager:
 
     # deleting the student in list
     def deleting(self, Slist):
+        if not self._check_permision("delete"):
+            return
+
         if not Slist:
             print(f"List is empty. Can not delete")
             return
@@ -281,6 +301,9 @@ class StudentManager:
 
     # Save/Load file
     def Input_Load(self, Slist):
+        if not self._check_permision("io"):
+            return
+
         try:
             with open(DEFAULT_DATA_FILE, "w", encoding="utf-8") as f:
                 f.write("Name,Birth,SID,Major,GPA\n")
@@ -307,7 +330,7 @@ class StudentManager:
                 continue
 
             if not file_to_load.lower().endswith((".csv", ".txt")):
-                print(f"Error: File must be .csv or txt")
+                print(f"Error: File must be .csv or .txt")
                 continue
             break
 
