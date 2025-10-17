@@ -46,7 +46,7 @@ def output_student_list(manager, Slist):
     overall_gpa = manager.calculate_gpa(Slist)
 
     print(f"-----------------------------")
-    print(f"TOTAL students: {len(Slist)} | Average GPA: {round(overall_gpa,2)}")
+    print(f"TOTAL students: {len(Slist)} | Average GPA: {round((overall_gpa/len(Slist)),2)}")
     print(f"-----------------------------")
 
 def main():
@@ -74,7 +74,7 @@ def main():
         print(f"3/ Delete student info")
         print(f"4/ Search student")
         print(f"5/ Sorting student")
-        print(f"6/ Calculate GPA (Average GPA)")
+        print(f"6/ Display Statistics")
         print(f"7/ Exit and extract file to .txt file")
         print(f"\n")
 
@@ -95,8 +95,7 @@ def main():
             case 5:
                 manager.sorting(Slist)
             case 6:
-                overall_gpa = manager.calculate_gpa(Slist)
-                print(f"Average GPA all student: {round(overall_gpa,2)}")
+                manager.statisticing(Slist)
             case 7:
                 manager.Input_Load(Slist)
                 print("Programming exit...")

@@ -9,8 +9,8 @@ DEFAULT_DATA_FILE = "students.txt"
 class StudentManager:
 
     Permission = {
-        "TEACHER": ["add", "edit", "delete", "search", "sort", "gpa", "io"],
-        "STUDENTS": ["search", "sort", "gpa"],
+        "TEACHER": ["add", "edit", "delete", "search", "sort", "statistic", "io"],
+        "STUDENTS": ["search", "sort", "statistic"],
     }
 
     def __init__(self, user_lg):
@@ -20,7 +20,9 @@ class StudentManager:
     def _check_permision(self, key_permission):
         if key_permission in self.Permission.get(self.user_lg, []):
             return True
-        print(f"\nAccess Denied: Role {self.user_lg} cannot perform '{key_permission}'.")
+        print(
+            f"\nAccess Denied: Role {self.user_lg} cannot perform '{key_permission}'."
+        )
         return False
 
     # print_student after sorting
@@ -297,7 +299,41 @@ class StudentManager:
             return 0.0
 
         total_gpa = sum(student.gpa for student in Slist)
-        return total_gpa / len(Slist)
+
+        return total_gpa 
+    
+    # show statistics
+    def statisticing(self, Slist):
+        if not Slist:
+            print(f"List is empty. Cannot show statistics")
+            return
+
+        total_student = len(Slist)
+        average_gpa = self.calculate_gpa(Slist) / total_student
+        highest_student = max(Slist, key=lambda student: student.gpa)
+        lowest_student = min(Slist, key=lambda student: student.gpa)
+
+        major_count = {}
+        for student in Slist:
+            major_count[student.major] = major_count.get(student.major, 0) + 1
+
+        print(f"\n---STUDENT STATISTICS---\n")
+        print(f"Total students: {total_student}")
+        print(f"Average GPA: {average_gpa:.2f}")
+        print(f"\nStudent with the highest GPA:")
+        print(f" - Name: {highest_student.name}, GPA: {highest_student.gpa}")
+        print(f"\nStudent with the lowest GPA:")
+        print(f" - Name: {lowest_student.name}, GPA: {lowest_student.gpa}")
+
+        print("\n---=Chart of Students/Major=---")
+        if major_count:
+            max_major = max(len(major_count) for major in major_count.keys())
+            for major, count in major_count.items():
+                bar = "=" * count
+                print(f"{major:<{max_major}} | [{bar}] ({count})")
+        else:
+            print(" - No major data avaiable to draw a chart")
+        print(f"--------------------------------------------")
 
     # Save/Load file
     def Input_Load(self, Slist):
